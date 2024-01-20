@@ -4,7 +4,11 @@ Sqids (pronounced "squids") is a small library that lets you generate YouTube-lo
 
 ## Getting started
 
-@todo
+```bash
+git clone https://github.com/sqids/sqids-bash.git
+cp sqids-bash/sqids/sqids /usr/local/bin
+chmod u+x /usr/local/bin/sqids
+```
 
 ## Examples
 
