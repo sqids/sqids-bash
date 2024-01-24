@@ -37,9 +37,6 @@ cp sqids-bash/src/sqids /usr/local/bin
 
 ## 👩‍💻 Examples
 
-> **Note**
-> Please note that the following examples omit proper error handling.
-
 Simple encode & decode:
 
 ```bash
