@@ -14,15 +14,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup shfmt
-      uses: mfinelli/setup-shfmt@v3
-
-    - name: Run shfmt
-      run: shfmt -i 4 -d ./src/ ./tests/
-
-    - name: Run ShellCheck
-      uses: ludeeus/action-shellcheck@master
-
     - name: Set up Bats
       run: |
         git clone https://github.com/bats-core/bats-core.git
@@ -31,3 +22,17 @@ jobs:
 
     - name: Run tests
       run: bats -T ./tests
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup shfmt
+      uses: mfinelli/setup-shfmt@v3
+
+    - name: Run shfmt
+      run: shfmt -i 4 -d ./src/ ./tests/
+
+    - name: Run ShellCheck
+      uses: ludeeus/action-shellcheck@master
