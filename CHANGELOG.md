@@ -4,4 +4,5 @@
 
 ### Added
 
-- Initial implementation (#1)
+- Initial implementation (#2)
+- Add version info & release (#5)
