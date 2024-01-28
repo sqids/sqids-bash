@@ -4,103 +4,103 @@ source ./src/sqids
 
 @test "test_ord" {
     ord "a"
-    [[ "$retval" = 97 ]]
+    [[ "$__RETURN" = 97 ]]
 
     ord "A"
-    [[ "$retval" = 65 ]]
+    [[ "$__RETURN" = 65 ]]
 
     ord "1"
-    [[ "$retval" = 49 ]]
+    [[ "$__RETURN" = 49 ]]
 }
 
 @test "test_splitstr" {
     splitstr "abcde"
-    [[ "$retval" = "a b c d e" ]]
+    [[ "$__RETURN" = "a b c d e" ]]
 
     splitstr "ab"
-    [[ "$retval" = "a b" ]]
+    [[ "$__RETURN" = "a b" ]]
 
     splitstr "a"
-    [[ "$retval" = "a" ]]
+    [[ "$__RETURN" = "a" ]]
 }
 
 @test "test_joinchars" {
     joinchars "" "a" "b" "c" "d" "e"
-    [[ "$retval" = "abcde" ]]
+    [[ "$__RETURN" = "abcde" ]]
 
     joinchars "" "a" "b"
-    [[ "$retval" = "ab" ]]
+    [[ "$__RETURN" = "ab" ]]
 
     joinchars "" "a"
-    [[ "$retval" = "a" ]]
+    [[ "$__RETURN" = "a" ]]
 
     joinchars "," "a" "b" "c" "d" "e"
-    [[ "$retval" = "a,b,c,d,e" ]]
+    [[ "$__RETURN" = "a,b,c,d,e" ]]
 
     joinchars "," "a" "b"
-    [[ "$retval" = "a,b" ]]
+    [[ "$__RETURN" = "a,b" ]]
 
     joinchars "," "a"
-    [[ "$retval" = "a" ]]
+    [[ "$__RETURN" = "a" ]]
 }
 
 @test "test_lower" {
     lower "ABC"
-    [[ "$retval" = "abc" ]]
+    [[ "$__RETURN" = "abc" ]]
 
     lower "AbC"
-    [[ "$retval" = "abc" ]]
+    [[ "$__RETURN" = "abc" ]]
 
     lower "abc"
-    [[ "$retval" = "abc" ]]
+    [[ "$__RETURN" = "abc" ]]
 }
 
 @test "test_shuffle" {
     shuffle "abcdefg"
-    [[ "$retval" = "bcefgad" ]]
+    [[ "$__RETURN" = "bcefgad" ]]
 
     shuffle "cd"
-    [[ "$retval" = "dc" ]]
+    [[ "$__RETURN" = "dc" ]]
 
     shuffle "a"
-    [[ "$retval" = "a" ]]
+    [[ "$__RETURN" = "a" ]]
 }
 
 @test "test_to_id" {
     to_id 4 "abcde"
-    [[ "$retval" = "e" ]]
+    [[ "$__RETURN" = "e" ]]
 
     to_id 10 "abcde"
-    [[ "$retval" = "ca" ]]
+    [[ "$__RETURN" = "ca" ]]
 
     to_id 99999 "abcdefghijklmnopqrstuvwxyz"
-    [[ "$retval" = "fryd" ]]
+    [[ "$__RETURN" = "fryd" ]]
 }
 
 @test "test_to_number" {
     to_number "abc" "abcdefghijklmnopqrstuvwxyz"
-    [[ "$retval" = 28 ]]
+    [[ "$__RETURN" = 28 ]]
 
     to_number "cba" "abcdefghijklmnopqrstuvwxyz"
-    [[ "$retval" = 1378 ]]
+    [[ "$__RETURN" = 1378 ]]
 
     to_number "a" "abcdefghijklmnopqrstuvwxyz"
-    [[ "$retval" = 0 ]]
+    [[ "$__RETURN" = 0 ]]
 }
 
 @test "test_is_blocked_id" {
     is_blocked_id "word1 word2 word3" "word2"
-    [[ "$retval" = true ]]
+    [[ "$__RETURN" = true ]]
 
     is_blocked_id "word1 word2 word3" "word4"
-    [[ "$retval" = false ]]
+    [[ "$__RETURN" = false ]]
 
     is_blocked_id "word1" "word1"
-    [[ "$retval" = true ]]
+    [[ "$__RETURN" = true ]]
 
     is_blocked_id "word1" "word2"
-    [[ "$retval" = false ]]
+    [[ "$__RETURN" = false ]]
 
     is_blocked_id "" "word1"
-    [[ "$retval" = false ]]
+    [[ "$__RETURN" = false ]]
 }

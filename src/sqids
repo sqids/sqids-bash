@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# -e: exit immediately if a command exits with a non-zero status
+# -u: treat unset variables as an error and exit immediately
+# -C: prevent overwriting files
+set -euC
+
 readonly DEFAULT_ALPHABET="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 readonly DEFAULT_BLOCKLIST=(
     "0rgasm"
@@ -567,36 +572,38 @@ readonly DEFAULT_MIN_LENGTH=0
 
 # usage: ord "A" -> 65
 ord() {
-    printf -v retval "%d" "'$1"
+    printf -v __RETURN "%d" "'$1"
 }
 
 # usage: splitstr "abcde" -> "a b c d e"
 splitstr() {
     local s="$1"
+    local i
     arr=()
-    for ((i_splitstr = 0; i_splitstr < ${#s}; i_splitstr++)); do
-        arr+=("${s:$i_splitstr:1}")
+    for ((i = 0; i < ${#s}; i++)); do
+        arr+=("${s:$i:1}")
     done
 
-    retval=${arr[*]}
+    __RETURN=${arr[*]}
 }
 
 # usage: joinchars "," a b c d e -> "a,b,c,d,e"
 joinchars() {
     local separator=$1
     local str=""
-    for ((i_joinchars = 2; i_joinchars < $#; i_joinchars++)); do
-        str+="${!i_joinchars}"
+    local i
+    for ((i = 2; i < $#; i++)); do
+        str+="${!i}"
         str+="$separator"
     done
     str+="${!#}"
 
-    retval="$str"
+    __RETURN="$str"
 }
 
 # usage: lower "AbCdE" -> "abcde"
 lower() {
-    retval="${1,,}"
+    __RETURN="${1,,}"
 }
 
 # usage: shuffle "abcdefg" -> "bcefgad"
@@ -604,24 +611,24 @@ shuffle() {
     local alphabet="$1"
     splitstr "$alphabet"
     local chars
-    IFS=" " read -r -a chars <<<"$retval"
+    IFS=" " read -r -a chars <<<"$__RETURN"
     local len=${#alphabet}
-    local i_shuffle=0
-    local j_shuffle=$((len - 1))
+    local i=0
+    local j=$((len - 1))
 
-    while [ $j_shuffle -gt 0 ]; do
+    while [ $j -gt 0 ]; do
 
-        ord "${chars[i_shuffle]}"
-        local i_shuffle_ord=$retval
-        ord "${chars[j_shuffle]}"
-        local j_shuffle_ord=$retval
+        ord "${chars[i]}"
+        local i_ord=$__RETURN
+        ord "${chars[j]}"
+        local j_ord=$__RETURN
 
-        local r_shuffle=$(((i_shuffle * j_shuffle + i_shuffle_ord + j_shuffle_ord) % len))
-        local temp=${chars[$i_shuffle]}
-        chars[i_shuffle]=${chars[$r_shuffle]}
-        chars[r_shuffle]=$temp
-        i_shuffle=$((i_shuffle + 1))
-        j_shuffle=$((j_shuffle - 1))
+        local r=$(((i * j + i_ord + j_ord) % len))
+        local temp=${chars[$i]}
+        chars[i]=${chars[$r]}
+        chars[r]=$temp
+        i=$((i + 1))
+        j=$((j - 1))
     done
 
     joinchars "" "${chars[@]}"
@@ -652,7 +659,7 @@ to_number() {
     local count=${#alphabet}
 
     splitstr "$id"
-    for id_char in $retval; do
+    for id_char in $__RETURN; do
         local index
         for ((index = 0; index < count; index++)); do
             if [ "${alphabet:$index:1}" == "$id_char" ]; then
@@ -662,7 +669,7 @@ to_number() {
         result=$((result * count + index))
     done
 
-    retval=$result
+    __RETURN=$result
 }
 
 # usage: is_blocked_id "blockedword1 blockedword2 blockedword3" "abcde" -> false
@@ -670,7 +677,7 @@ is_blocked_id() {
     local block_list=$1
     local id="$2"
     lower "$id"
-    id=$retval
+    id=$__RETURN
 
     for word in $block_list; do
         if [ ${#word} -gt ${#id} ]; then
@@ -679,21 +686,21 @@ is_blocked_id() {
 
         if [[ ${#id} -le 3 || ${#word} -le 3 ]]; then
             if [ "$id" == "$word" ]; then
-                retval=true
+                __RETURN=true
                 return 0
             fi
         elif [[ "$word" == *[0-9]* ]]; then
             if [[ "$id" == "$word"* || "$id" == *"$word" ]]; then
-                retval=true
+                __RETURN=true
                 return 0
             fi
         elif [[ "$id" == *"$word"* ]]; then
-            retval=true
+            __RETURN=true
             return 0
         fi
     done
 
-    retval=false
+    __RETURN=false
     return 0
 }
 
@@ -702,6 +709,7 @@ encode_numbers() {
     local original_alphabet_str
     local block_list
     local min_length
+    local i
 
     local OPTIND=0
     while getopts a:b:l: OPT; do
@@ -717,7 +725,7 @@ encode_numbers() {
     done
 
     shuffle "$original_alphabet_str"
-    local alphabet_str=$retval
+    local alphabet_str=$__RETURN
 
     shift $((OPTIND - 1))
 
@@ -735,7 +743,7 @@ encode_numbers() {
         local v=${numbers[i]}
         local char=${alphabet_str:$((v % ${#alphabet_str})):1}
         ord "$char"
-        local char_ord=$retval
+        local char_ord=$__RETURN
         offset=$((offset + char_ord + i))
     done
 
@@ -765,7 +773,7 @@ encode_numbers() {
     for ((i = 0; i < ${#numbers[@]}; i++)); do
         local num=${numbers[$i]}
         to_id "$num" "${alphabet_str:1}"
-        ret+=("$retval")
+        ret+=("$__RETURN")
 
         if [[ $i -ge $((${#numbers[@]} - 1)) ]]; then
             continue
@@ -773,25 +781,25 @@ encode_numbers() {
 
         ret+=("${alphabet_str:0:1}")
         shuffle "$alphabet_str"
-        alphabet_str=$retval
+        alphabet_str=$__RETURN
     done
 
     joinchars "" "${ret[@]}"
-    local id=$retval
+    local id=$__RETURN
 
     if [ "$min_length" -gt "${#id}" ]; then
         id+=${alphabet_str:0:1}
 
         while [ $((min_length - ${#id})) -gt 0 ]; do
             shuffle "$alphabet_str"
-            alphabet_str=$retval
+            alphabet_str=$__RETURN
             joinchars "" "${alphabet_str:0:$((min_length - ${#id} < ${#alphabet_str} ? min_length - ${#id} : ${#alphabet_str}))}"
-            id+=$retval
+            id+=$__RETURN
         done
     fi
 
     is_blocked_id "$block_list" "$id"
-    local is_blocked=$retval
+    local is_blocked=$__RETURN
     if $is_blocked; then
         encode_numbers -a "$original_alphabet_str" -b "$block_list" -l "$min_length" "${numbers[@]}" $((increment + 1))
     else
@@ -834,6 +842,7 @@ encode() {
 # usage: decode -a $DEFAULT_ALPHABET "abcde" -> 10273415
 decode() {
     local alphabet_str
+    local i
 
     local OPTIND=0
     while getopts :a: OPT; do
@@ -847,7 +856,7 @@ decode() {
     done
 
     shuffle "$alphabet_str"
-    alphabet_str=$retval
+    alphabet_str=$__RETURN
 
     shift $((OPTIND - 1))
 
@@ -861,10 +870,10 @@ decode() {
 
     # check if any characters are not in the alphabet
     splitstr "$id"
-    for c in $retval; do
+    for c in $__RETURN; do
         local does_exist=false
         splitstr "$alphabet_str"
-        for a in $retval; do
+        for a in $__RETURN; do
             if [ "$a" == "$c" ]; then
                 does_exist=true
                 break
@@ -898,7 +907,7 @@ decode() {
     done
 
     joinchars "" "${alphabet_chars_rev[@]}"
-    alphabet_str=$retval
+    alphabet_str=$__RETURN
 
     id="${id:1}"
 
@@ -924,18 +933,18 @@ decode() {
                 return 0
             else
                 to_number "${chunks[0]}" "${alphabet_str:1:${#alphabet_str}-1}"
-                ret+=("$retval")
+                ret+=("$__RETURN")
 
                 if [ "${#chunks[@]}" -gt 1 ]; then
                     shuffle "$alphabet_str"
-                    alphabet_str=$retval
+                    alphabet_str=$__RETURN
                 fi
             fi
         fi
 
         if [ "${#chunks[@]}" -gt 1 ]; then
             joinchars "$separator" "${chunks[@]:1}"
-            id=$retval
+            id=$__RETURN
         else
             echo "${ret[@]}"
             return 0
@@ -978,6 +987,10 @@ main() {
     local min_length="$DEFAULT_MIN_LENGTH"
     local alphabet="$DEFAULT_ALPHABET"
     local block_list="${DEFAULT_BLOCKLIST[*]}"
+    local flag_a=false
+    local flag_b=false
+    local flag_e=false
+    local flag_d=false
 
     local OPTIND=0
     while getopts :a:b:l:edhv OPT; do
@@ -1015,15 +1028,15 @@ main() {
         exit 1
     fi
 
-    if [[ $flag_e && $flag_d ]]; then
+    if $flag_e && $flag_d; then
         echo "ERROR: option -e (encode) and -d (decode) cannot be used together" >&2
         exit 1
     fi
 
     splitstr "$alphabet"
-    for char in $retval; do
+    for char in $__RETURN; do
         ord "$char"
-        local char_ord=$retval
+        local char_ord=$__RETURN
         if [[ $char_ord -gt 127 ]]; then
             echo "ERROR: Alphabet cannot contain multibyte characters" >&2
             exit 1
@@ -1049,20 +1062,20 @@ main() {
     local filtered_blocklist=()
     if $flag_a || $flag_b; then
         lower "$alphabet"
-        local alphabet_lower=$retval
+        local alphabet_lower=$__RETURN
         declare -A alphabet_lower_dict
         splitstr "$alphabet_lower"
-        for char in $retval; do
+        for char in $__RETURN; do
             alphabet_lower_dict[$char]=true
         done
 
         lower "$block_list"
-        for word_lower in $retval; do
+        for word_lower in $__RETURN; do
             if [[ ${#word_lower} -ge 3 ]]; then
                 local does_exist=true
                 splitstr "$word_lower"
-                for char in $retval; do
-                    if [[ -z "${alphabet_lower_dict[$char]}" ]]; then
+                for char in $__RETURN; do
+                    if [[ -z "${alphabet_lower_dict[$char]:-false}" ]]; then
                         does_exist=false
                         break
                     fi
