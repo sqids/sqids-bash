@@ -23,10 +23,10 @@ jobs:
     - name: Create docker image and run container
       run: |
         docker build --build-arg VERSION=${{ matrix.version }} -t "sqids-bash/test:bash-${{ matrix.version }}" .
-        docker run -id "sqids-bash/test:bash-${{ matrix.version }}"
+        docker run -id --name "bash-${{ matrix.version }}" "sqids-bash/test:bash-${{ matrix.version }}"
 
     - name: Run tests
-      run: bats -T ./tests
+      run: docker container exec "bash-${{ matrix.version }}" bats ./tests
 
   lint:
     runs-on: ubuntu-latest
