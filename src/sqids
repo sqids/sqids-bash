@@ -1048,10 +1048,16 @@ main() {
         exit 1
     fi
 
-    if [[ -n $(echo "$alphabet" | fold -s1 | sort | uniq -d) ]]; then
-        echo "ERROR: Alphabet cannot contain duplicate characters" >&2
-        exit 1
-    fi
+    declare -A alphabet_dict
+    splitstr "$alphabet"
+    for char in $__RETURN; do
+        if ${alphabet_dict[$char]:-false}; then
+            echo "ERROR: Alphabet cannot contain duplicate characters" >&2
+            exit 1
+        else
+            alphabet_dict[$char]=true
+        fi
+    done
 
     MIN_LENGTH_LIMIT=255
     if [[ $min_length -lt 0 || $min_length -gt $MIN_LENGTH_LIMIT ]]; then

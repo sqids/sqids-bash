@@ -7,18 +7,23 @@ on:
   pull_request:
     branches:
       - main
+  schedule:
+    - cron: '0 0 1 * *' # Run on the first day of every month
+  workflow_dispatch:
 
 jobs:
   test:
+    strategy:
+      matrix:
+        version: ['3.2', '4.0', '4.1', '4.2', '4.3', '4.4', '5.0', '5.1', 'latest']
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Bats
+    - name: Create docker image
       run: |
-        git clone https://github.com/bats-core/bats-core.git
-        cd bats-core
-        sudo ./install.sh /usr/local
+        docker build --build-arg VERSION=${{ matrix.version }} -t "sqids-bash/test:bash-${{ matrix.version }}" .
+        docker run -it "sqids-bash/test:bash-${{ matrix.version }}"
 
     - name: Run tests
       run: bats -T ./tests
