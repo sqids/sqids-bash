@@ -1,6 +1,6 @@
 # [Sqids Bash](https://sqids.org/bash)
 
-[![Github Actions](https://img.shields.io/github/actions/workflow/status/sqids/sqids-bash/tests.yml)](https://github.com/sqids/sqids-bash/actions)
+[![Tests](https://github.com/sqids/sqids-bash/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/sqids/sqids-bash/actions/workflows/tests.yml)
 
 [Sqids](https://sqids.org/bash) (*pronounced "squids"*) is a small library that lets you **generate unique IDs from numbers**. It's good for link shortening, fast & URL-safe ID generation and decoding back into numbers for quicker database lookups.
 
