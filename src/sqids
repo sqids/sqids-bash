@@ -641,7 +641,7 @@ to_id() {
     local id_chars=()
 
     while true; do
-        id_chars=("${alphabet:$((num % ${#alphabet})):1}" "${id_chars[@]+"${id_chars[@]}"}") # it can be "${id_chars[@]}" without `set -u`, workaround for bash 4.0.0
+        id_chars=("${alphabet:$((num % ${#alphabet})):1}" "${id_chars[@]+"${id_chars[@]}"}") # it can be "${id_chars[@]}" without `set -u`, workaround for bash 4.0
         num=$((num / ${#alphabet}))
         if [[ $num -eq 0 ]]; then
             break
@@ -1096,7 +1096,7 @@ main() {
     case "$mode" in
     "encode")
         if $flag_a || $flag_b; then
-            encode -a "$alphabet" -b "${filtered_blocklist[*]+"${filtered_blocklist[*]}"}" -l "$min_length" "$@" # it can be "${filtered_blocklist[*]}" without `set -u`, workaround for bash 4.0.0
+            encode -a "$alphabet" -b "${filtered_blocklist[*]+"${filtered_blocklist[*]}"}" -l "$min_length" "$@" # it can be "${filtered_blocklist[*]}" without `set -u`, workaround for bash 4.0
         else
             encode -a "$alphabet" -b "${block_list[*]}" -l "$min_length" "$@"
         fi
