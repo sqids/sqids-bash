@@ -823,7 +823,11 @@ encode() {
     if [[ -z "$*" ]]; then
         echo ""
     else
-        encode_numbers -a "$alphabet" -b "$block_list" -l "$min_length" "$@" 0
+        nums=()
+        for num in "$@"; do
+            nums+=("$((10#$num))")
+        done
+        encode_numbers -a "$alphabet" -b "$block_list" -l "$min_length" "${nums[@]}" 0
     fi
 }
 
