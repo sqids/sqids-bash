@@ -949,17 +949,23 @@ Description:
     It's good for link shortening, fast & URL-safe ID generation and decoding back into numbers for quicker database lookups.
 
 Usage:
-    $0 [-a alphabet] [-b block_list] [-h] [-l min_length] [-d ID] [-e numbers...]
+    $0 [-h] [-v] [-a alphabet] [-b block_list] [-l min_length] [-d ID] [-e numbers...]
 
 Options:
+    -h  Show this help message.
+    -v  Show version.
     -a  Set custom alphabet. Default is "$DEFAULT_ALPHABET".
     -b  Set custom block list. See https://github.com/sqids/sqids-blocklist for default block list.
-    -h  Show this help message.
     -l  Set minimum length of the ID. Default is 0.
     -d  Decode mode. Decodes the given ID into numbers. Cannot be used with -e.
     -e  Encode mode. Encodes the given numbers into an ID. Cannot be used with -d.
 
 EOS
+    exit 0
+}
+
+version() {
+    echo "sqids-bash version 1.0.0"
     exit 0
 }
 
@@ -970,7 +976,7 @@ main() {
     local block_list="${DEFAULT_BLOCKLIST[*]}"
 
     local OPTIND=0
-    while getopts :a:b:l:edh OPT; do
+    while getopts :a:b:l:edhv OPT; do
         case $OPT in
         a)
             alphabet="$OPTARG"
@@ -990,6 +996,7 @@ main() {
             flag_d=true
             ;;
         h) usage ;;
+        v) version ;;
         ?)
             echo "ERROR: Invalid option -$OPTARG" >&2
             exit 1
