@@ -603,8 +603,7 @@ joinchars() {
 
 # usage: lower "AbCdE" -> "abcde"
 lower() {
-    __RETURN=$(echo "$1" | tr '[:upper:]' '[:lower:]')
-    # __RETURN="${1,,}" # does not work with bash 3.2
+    __RETURN="${1,,}"
 }
 
 # usage: shuffle "abcdefg" -> "bcefgad"

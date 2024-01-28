@@ -31,11 +31,17 @@ Not good for:
 
 ## 🚀 Getting started
 
+If your bash version is not 4.0 or higher, please upgrade your bash. (You can check with `$bash --version`.)
+
+Once you have verified the version of bash, run
+
 ```bash
 git clone https://github.com/sqids/sqids-bash.git
 chmod +x sqids-bash/src/sqids
 cp sqids-bash/src/sqids /usr/local/bin
 ```
+
+You may need to add `sudo` before the command to run the commands as root.
 
 ## 👩‍💻 Examples
 
