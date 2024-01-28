@@ -978,7 +978,7 @@ EOS
 }
 
 version() {
-    echo "sqids-bash version 1.0.0"
+    echo "sqids-bash version 1.0.1"
     exit 0
 }
 
