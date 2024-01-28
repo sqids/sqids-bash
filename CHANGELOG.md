@@ -1,10 +1,11 @@
 # CHANGELOG
 
-## [1.0.1] - 2024-01-28
+## [1.0.1] - 2024-01-29
 
 ### Fixed
 
 - Fix encoding numbers with leading zeros throws an error. (#6)
+- Works with bash version 4.0 or higher (#7)
 
 ## [1.0.0] - 2024-01-28
 

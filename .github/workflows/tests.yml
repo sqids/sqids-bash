@@ -7,9 +7,29 @@ on:
   pull_request:
     branches:
       - main
+  schedule:
+    - cron: '0 0 1 * *' # Run on the first day of every month
+  workflow_dispatch:
 
 jobs:
   test:
+    strategy:
+      matrix:
+        version: ['4.0', '4.1', '4.2', '4.3', '4.4', '5.0', '5.1', 'latest']
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Create docker image and run container
+      run: |
+        docker build --build-arg VERSION=${{ matrix.version }} -t "sqids-bash/test:bash-${{ matrix.version }}" .
+        docker run -id --name "bash-${{ matrix.version }}" "sqids-bash/test:bash-${{ matrix.version }}"
+
+    - name: Run tests
+      run: docker container exec "bash-${{ matrix.version }}" bats ./tests
+
+  lint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -22,12 +42,3 @@ jobs:
 
     - name: Run ShellCheck
       uses: ludeeus/action-shellcheck@master
-
-    - name: Set up Bats
-      run: |
-        git clone https://github.com/bats-core/bats-core.git
-        cd bats-core
-        sudo ./install.sh /usr/local
-
-    - name: Run tests
-      run: bats -T ./tests
