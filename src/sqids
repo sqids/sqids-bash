@@ -983,7 +983,7 @@ version() {
 }
 
 main() {
-    local mode
+    local mode=""
     local min_length="$DEFAULT_MIN_LENGTH"
     local alphabet="$DEFAULT_ALPHABET"
     local block_list="${DEFAULT_BLOCKLIST[*]}"
